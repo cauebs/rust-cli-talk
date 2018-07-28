@@ -1,7 +1,7 @@
 language: rust
 
 before_script:
-  - cargo install --force mdbook
+  - cargo install --force mdbook --vers "0.1.8"
 
 script:
   - mdbook build
