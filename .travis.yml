@@ -1,0 +1,19 @@
+language: rust
+
+before_script:
+  - cargo install --force mdbook
+
+script:
+  - mdbook build
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  local-dir: book
+  on:
+    branch: master
+
+cache:
+  - cargo
+
