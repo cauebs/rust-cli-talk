@@ -7,4 +7,4 @@ fn main() {
 ```
 
 - Slides criados com [mdBook](https://github.com/rust-lang-nursery/mdbook)
-- Disponíveis em [github.com/cauebs/talks](https://github.com/cauebs/talks)
+- Disponíveis em [cauebs.github.io/rust-cli-talk](https://cauebs.github.io/rust-cli-talk)
