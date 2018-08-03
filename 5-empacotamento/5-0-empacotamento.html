@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Empacotamento - Criando e empacotando uma aplicação CLI</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Uma demonstração do tooling envolvido na criação de uma aplicação para linha de comando e o envio para o crates.io. Pretendo falar sobre o uso do Cargo, as bibliotecas mais comuns para parsear argumentos (clap, structopt, thunder e docopt) e tratamento de erros com failure.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "../";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="../1-introducao/1-0-introducao.html"><strong aria-hidden="true">1.</strong> Introdução</a></li><li><ol class="section"><li><a href="../1-introducao/1-1-working-groups/1-1-0-working-groups.html"><strong aria-hidden="true">1.1.</strong> Domain Working Groups de 2018</a></li><li><ol class="section"><li><a href="../1-introducao/1-1-working-groups/1-1-1-cli-wg.html"><strong aria-hidden="true">1.1.1.</strong> CLI WG</a></li></ol></li><li><a href="../1-introducao/1-2-o-que-e-cli.html"><strong aria-hidden="true">1.2.</strong> O que é uma CLI?</a></li><li><a href="../1-introducao/1-3-0-o-que-nao-e-cli.html"><strong aria-hidden="true">1.3.</strong> O que não é uma CLI?</a></li><li><ol class="section"><li><a href="../1-introducao/1-3-1-tui.html"><strong aria-hidden="true">1.3.1.</strong> TUI</a></li><li><a href="../1-introducao/1-3-2-gui.html"><strong aria-hidden="true">1.3.2.</strong> GUI</a></li></ol></li></ol></li><li><a href="../2-parsing-de-argumentos/2-0-parsing-de-argumentos.html"><strong aria-hidden="true">2.</strong> Parsing de Argumentos</a></li><li><ol class="section"><li><a href="../2-parsing-de-argumentos/2-1-clap/2-1-0-clap.html"><strong aria-hidden="true">2.1.</strong> CLAP</a></li><li><ol class="section"><li><a href="../2-parsing-de-argumentos/2-1-clap/2-1-1-builder-pattern.html"><strong aria-hidden="true">2.1.1.</strong> Método 1: Builder Pattern</a></li><li><a href="../2-parsing-de-argumentos/2-1-clap/2-1-2-usage-string.html"><strong aria-hidden="true">2.1.2.</strong> Método 2: Usage String</a></li><li><a href="../2-parsing-de-argumentos/2-1-clap/2-1-3-yaml.html"><strong aria-hidden="true">2.1.3.</strong> Método 3: YAML</a></li><li><a href="../2-parsing-de-argumentos/2-1-clap/2-1-4-macro.html"><strong aria-hidden="true">2.1.4.</strong> Método 4: Macro</a></li><li><a href="../2-parsing-de-argumentos/2-1-clap/2-1-5-extracao-dos-argumentos.html"><strong aria-hidden="true">2.1.5.</strong> Extração dos Argumentos</a></li></ol></li><li><a href="../2-parsing-de-argumentos/2-2-structopt/2-2-0-structopt.html"><strong aria-hidden="true">2.2.</strong> StructOpt</a></li><li><ol class="section"><li><a href="../2-parsing-de-argumentos/2-2-structopt/2-2-1-struct.html"><strong aria-hidden="true">2.2.1.</strong> Struct</a></li><li><a href="../2-parsing-de-argumentos/2-2-structopt/2-2-2-enum.html"><strong aria-hidden="true">2.2.2.</strong> Enum</a></li></ol></li><li><a href="../2-parsing-de-argumentos/2-3-thunder.html"><strong aria-hidden="true">2.3.</strong> Thunder</a></li><li><a href="../2-parsing-de-argumentos/2-4-docopt.html"><strong aria-hidden="true">2.4.</strong> Docopt</a></li><li><a href="../2-parsing-de-argumentos/2-5-std.html"><strong aria-hidden="true">2.5.</strong> std</a></li></ol></li><li><a href="../3-tratamento-de-erros/3-0-tratamento-de-erros.html"><strong aria-hidden="true">3.</strong> Tratamento de Erros</a></li><li><ol class="section"><li><a href="../3-tratamento-de-erros/3-1-unwrap-expect.html"><strong aria-hidden="true">3.1.</strong> unwrap/expect</a></li><li><a href="../3-tratamento-de-erros/3-2-no-main.html"><strong aria-hidden="true">3.2.</strong> ? no main</a></li><li><a href="../3-tratamento-de-erros/3-3-lidando-com-varios-tipos-de-erros.html"><strong aria-hidden="true">3.3.</strong> Lidando com vários tipos de erros</a></li><li><a href="../3-tratamento-de-erros/3-4-failure.html"><strong aria-hidden="true">3.4.</strong> Failure</a></li><li><a href="../3-tratamento-de-erros/3-5-exitfailure.html"><strong aria-hidden="true">3.5.</strong> ExitFailure</a></li><li><a href="../3-tratamento-de-erros/3-6-human-panic.html"><strong aria-hidden="true">3.6.</strong> human-panic</a></li></ol></li><li><a href="../4-testes.html"><strong aria-hidden="true">4.</strong> Testes</a></li><li><a href="../5-empacotamento/5-0-empacotamento.html" class="active"><strong aria-hidden="true">5.</strong> Empacotamento</a></li><li><ol class="section"><li><a href="../5-empacotamento/5-1-cargo.html"><strong aria-hidden="true">5.1.</strong> Cargo</a></li><li><a href="../5-empacotamento/5-2-compilacao-cruzada.html"><strong aria-hidden="true">5.2.</strong> Compilação Cruzada</a></li><li><a href="../5-empacotamento/5-3-geracao-de-pacotes.html"><strong aria-hidden="true">5.3.</strong> Geração de Pacotes</a></li></ol></li><li><a href="../6-documentacao.html"><strong aria-hidden="true">6.</strong> Documentação</a></li><li><a href="../7-exemplos/7-0-exemplos.html"><strong aria-hidden="true">7.</strong> Exemplos de sucesso</a></li><li><ol class="section"><li><a href="../7-exemplos/7-1-exa.html"><strong aria-hidden="true">7.1.</strong> exa</a></li><li><a href="../7-exemplos/7-2-ripgrep.html"><strong aria-hidden="true">7.2.</strong> ripgrep</a></li><li><a href="../7-exemplos/7-3-fd.html"><strong aria-hidden="true">7.3.</strong> fd</a></li><li><a href="../7-exemplos/7-4-bat.html"><strong aria-hidden="true">7.4.</strong> bat</a></li><li><a href="../7-exemplos/7-5-tokei.html"><strong aria-hidden="true">7.5.</strong> tokei</a></li><li><a href="../7-exemplos/7-6-hyperfine.html"><strong aria-hidden="true">7.6.</strong> hyperfine</a></li><li><a href="../7-exemplos/7-7-durt.html"><strong aria-hidden="true">7.7.</strong> durt</a></li></ol></li><li><a href="../8-fim.html"><strong aria-hidden="true">8.</strong> Fim</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Criando e empacotando uma aplicação CLI</h1> 
+
+                        <div class="right-buttons">
+                            <a href="../print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#empacotamento" id="empacotamento"><h1>Empacotamento</h1></a>
+<p><img src="https://raw.githubusercontent.com/rochacbruno/rust_memes/master/img/crates.jpg" width="250px"/></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="../4-testes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="../5-empacotamento/5-1-cargo.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="../4-testes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="../5-empacotamento/5-1-cargo.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
